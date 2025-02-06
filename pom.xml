@@ -15,7 +15,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>23</maven.compiler.release>
-        <exec.mainClass>matchingpair.Main</exec.mainClass>
+        <exec.mainClass>matchingpairs.Main</exec.mainClass>
     </properties>
     <name>MatchingPairs</name>
 </project>

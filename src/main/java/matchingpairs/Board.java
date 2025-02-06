@@ -4,6 +4,12 @@
  */
 package matchingpairs;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+
 /**
  *
  * @author gabri
@@ -30,14 +36,14 @@ public class Board extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButton3 = new Card(0);
-        jButton4 = new Card(1);
-        jButton5 = new Card(2);
-        jButton6 = new Card(3);
-        jButton7 = new Card(4);
-        jButton8 = new Card(5);
-        jButton9 = new Card(6);
-        jButton10 = new Card(7);
+        jButton3 = new Card(0, this);
+        jButton4 = new Card(1, this);
+        jButton5 = new Card(2, this);
+        jButton6 = new Card(3, this);
+        jButton7 = new Card(4, this);
+        jButton8 = new Card(5, this);
+        jButton9 = new Card(6, this);
+        jButton10 = new Card(7, this);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
@@ -67,13 +73,18 @@ public class Board extends javax.swing.JFrame {
         jLabel2.setPreferredSize(new java.awt.Dimension(80, 20));
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 490, -1, -1));
 
-        jButton3.setText("jButton3");
+        jButton3.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton3.setInheritsPopupMenu(true);
         jButton3.setOpaque(true);
         jButton3.setPreferredSize(new java.awt.Dimension(100, 100));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 180, -1, -1));
 
-        jButton4.setText("jButton3");
+        jButton4.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton4.setInheritsPopupMenu(true);
         jButton4.setOpaque(true);
         jButton4.setPreferredSize(new java.awt.Dimension(100, 100));
@@ -84,37 +95,37 @@ public class Board extends javax.swing.JFrame {
         });
         getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 180, -1, -1));
 
-        jButton5.setText("jButton3");
+        jButton5.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton5.setInheritsPopupMenu(true);
         jButton5.setOpaque(true);
         jButton5.setPreferredSize(new java.awt.Dimension(100, 100));
         getContentPane().add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 180, -1, -1));
 
-        jButton6.setText("jButton3");
+        jButton6.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton6.setInheritsPopupMenu(true);
         jButton6.setOpaque(true);
         jButton6.setPreferredSize(new java.awt.Dimension(100, 100));
         getContentPane().add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 180, -1, -1));
 
-        jButton7.setText("jButton3");
+        jButton7.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton7.setInheritsPopupMenu(true);
         jButton7.setOpaque(true);
         jButton7.setPreferredSize(new java.awt.Dimension(100, 100));
         getContentPane().add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 300, -1, -1));
 
-        jButton8.setText("jButton3");
+        jButton8.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton8.setInheritsPopupMenu(true);
         jButton8.setOpaque(true);
         jButton8.setPreferredSize(new java.awt.Dimension(100, 100));
         getContentPane().add(jButton8, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 300, -1, -1));
 
-        jButton9.setText("jButton3");
+        jButton9.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton9.setInheritsPopupMenu(true);
         jButton9.setOpaque(true);
         jButton9.setPreferredSize(new java.awt.Dimension(100, 100));
         getContentPane().add(jButton9, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 300, -1, -1));
 
-        jButton10.setText("jButton3");
+        jButton10.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton10.setInheritsPopupMenu(true);
         jButton10.setOpaque(true);
         jButton10.setPreferredSize(new java.awt.Dimension(100, 100));
@@ -125,12 +136,16 @@ public class Board extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        shuffle();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -146,4 +161,35 @@ public class Board extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
+    private ArrayList<Integer> cardValues;
+    private PropertyChangeSupport changes = new PropertyChangeSupport(this);
+    
+    public void addPropertyChangeListener(PropertyChangeListener l) {
+        changes.addPropertyChangeListener(l);
+    }
+
+    private void shuffle() {
+        ArrayList<Integer> newCardValues = new ArrayList<Integer>();
+        Random random = new Random();
+        
+        for (int i = 0; i < 4; i++) {
+            int rand;
+            
+            do {
+                rand = random.nextInt(10);
+            } while(newCardValues.contains(rand));
+            
+            newCardValues.add(rand);
+            newCardValues.add(rand);
+        }
+
+        Collections.shuffle(newCardValues);
+        setCardValues(newCardValues);        
+    }
+    
+    private void setCardValues(ArrayList<Integer> newCardValues) {
+        ArrayList<Integer> oldCardValues = cardValues;
+        cardValues = newCardValues;
+        changes.firePropertyChange("cardValues", oldCardValues, newCardValues);
+    }
 }

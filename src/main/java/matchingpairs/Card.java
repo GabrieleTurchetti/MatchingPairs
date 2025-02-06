@@ -4,11 +4,16 @@
  */
 package matchingpairs;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeSupport;
 import java.beans.VetoableChangeListener;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 
 /**
@@ -16,6 +21,7 @@ import javax.swing.JButton;
  * @author gabri
  */
 public class Card extends JButton {
+  
     enum State {
         EXCLUDED,
         FACE_DOWN,
@@ -25,16 +31,34 @@ public class Card extends JButton {
     private int value;
     private State state;
     private int index;
-    private PropertyChangeSupport changes = new PropertyChangeSupport(this);
     private VetoableChangeSupport vetos = new VetoableChangeSupport(this);
+    private Board board;
+    private final PropertyChangeSupport changes = new PropertyChangeSupport(this);;
     
-    public Card(int index) {
+    private void setValue(int newValue) {
+        value = newValue;
+        setText(Integer.toString(value));
+    }
+    
+    public class CardValuesListener implements PropertyChangeListener, Serializable {
+        public void propertyChange(PropertyChangeEvent evt) {
+            int newValue = ((ArrayList<Integer>) evt.getNewValue()).get(index);
+            setValue(newValue);
+        }
+    }
+    
+    public Card(int index, Board board) {
         this.index = index;
+        this.board = board;
         this.state = State.FACE_DOWN;
+        CardValuesListener cardValuesListener = new CardValuesListener();
+        this.board.addPropertyChangeListener(cardValuesListener);
     }
     
     public void addPropertyChangeListener(PropertyChangeListener l) {
-        changes.addPropertyChangeListener(l);
+        if (this.changes != null) {
+            this.changes.addPropertyChangeListener(l);
+        } 
     }
     
     public void addVetoableChangelistener(VetoableChangeListener l) {
