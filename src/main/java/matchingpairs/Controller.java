@@ -10,6 +10,9 @@ import java.beans.PropertyChangeSupport;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.io.Serializable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
@@ -40,48 +43,71 @@ public class Controller extends JLabel {
             card.addVetoableChangelistener(cardStatesListener);
         }
     }
-        
     
     public class CardStatesListener implements VetoableChangeListener, Serializable {
         @Override
         public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
             if (evt.getPropertyName().equals("state")) {
-                switch ((State) evt.getOldValue()) {
+                State oldState = (State) evt.getOldValue();
+                State newState = (State) evt.getNewValue();
+                
+                switch (newState) {
                     case FACE_UP:
-                        throw new PropertyVetoException("The card is already uncovered.", evt);
+                        if (oldState == State.FACE_DOWN) {
+                            if (v1 == -1) {
+                                v1 = ((Card) evt.getSource()).getValue();
+                                changes.firePropertyChange("uncovered", false, true);
+                                break;
+                            }
+
+                            if (v2 == -1) {
+                                v2 = ((Card) evt.getSource()).getValue();
+                                changes.firePropertyChange("uncovered", false, true);
+                                onMatch();
+                                break;
+                            }
+                            
+                            throw new PropertyVetoException("The are already 2 uncovered cards.", evt);
+                        }
+                        
+                        throw new PropertyVetoException("The card is already excluded.", evt);
                         
                     case FACE_DOWN:
-                        if (v1 == -1) {
-                            v1 = ((Card) evt.getSource()).getValue();
-                            break;
-                        }
-                        
-                        if (v2 == -1) {
-                            System.out.println("here");
-                            v2 = ((Card) evt.getSource()).getValue();                           
-                            onMatch();
-                        }
+                        break;
                         
                     case EXCLUDED:
-                        throw new PropertyVetoException("The card is exluded.", evt);
+                        break;
                 }
             }
         }
     }
     
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener l) {
+        if (changes != null) {
+            changes.addPropertyChangeListener(l);
+        } 
+    }
+    
     private void onMatch() {
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        
         if (v1 == v2) {
-            System.out.println("here");
             this.setText("Pairs: " + ++matchCount);
-            
-            new Timer(500, e -> {
+           
+            scheduler.schedule(() -> {
                 changes.firePropertyChange("matched", false, true);
-            }).start();
+                v1 = -1;
+                v2 = -1;
+            }, 500, TimeUnit.MILLISECONDS);
+            
+            return;
         }
-        else {
-            new Timer(500, e -> {
-                changes.firePropertyChange("matched", false, false);
-            }).start();
-        }
+            
+        scheduler.schedule(() -> {
+            changes.firePropertyChange("matched", true, false);
+            v1 = -1;
+            v2 = -1;
+        }, 500, TimeUnit.MILLISECONDS);
     }
 }

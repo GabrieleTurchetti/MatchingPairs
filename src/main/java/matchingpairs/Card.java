@@ -51,17 +51,19 @@ public class Card extends JButton {
             }
         }
     }
-    
+
     public class MatchedListener implements PropertyChangeListener, Serializable {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals("matched")) {
-                if ((boolean) evt.getNewValue() && state == State.FACE_UP) {
-                    setState(State.EXCLUDED);       
-                    return;
+                if (state == State.FACE_UP) {
+                    if (((boolean) evt.getNewValue())) {
+                        setState(State.EXCLUDED);  
+                        return;
+                    }
+                    
+                    setState(State.FACE_DOWN);
                 }
-                
-                setState(State.FACE_DOWN);
             }
         }
     }
@@ -102,8 +104,8 @@ public class Card extends JButton {
                     break;
                     
                 case FACE_DOWN:
-                    setBackground(Colors.green);
                     setText("");
+                    setBackground(Colors.green);
                     break;
                     
                 case EXCLUDED:

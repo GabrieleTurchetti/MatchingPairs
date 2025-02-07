@@ -26,6 +26,12 @@ public class Board extends javax.swing.JFrame {
         JButton[] jButtons = {jButton3, jButton4, jButton5, jButton6, jButton7, jButton8, jButton9, jButton10};
         Card[] cards = Arrays.copyOf(jButtons, jButtons.length, Card[].class);
         ((Controller) jLabel1).setCards(cards);
+        
+        for (Card card : cards) {
+            card.setController((Controller) jLabel1);
+        }
+        
+        ((Counter) jLabel2).setController((Controller) jLabel1);
         shuffle();
     }
 
@@ -41,7 +47,7 @@ public class Board extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel1 = new Controller();
-        jLabel2 = new javax.swing.JLabel();
+        jLabel2 = new Counter();
         jButton3 = new Card(0, this);
         jButton4 = new Card(1, this);
         jButton5 = new Card(2, this);
@@ -79,7 +85,7 @@ public class Board extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Moves: 100");
+        jLabel2.setText("Moves: 0");
         jLabel2.setPreferredSize(new java.awt.Dimension(140, 20));
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 490, -1, -1));
 
@@ -184,7 +190,7 @@ public class Board extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        reset();
+        shuffle();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -258,14 +264,6 @@ public class Board extends javax.swing.JFrame {
 
         Collections.shuffle(newCardValues);
         setCardValues(newCardValues);        
-    }
-    
-    private void reset() {
-        initComponents();
-        JButton[] jButtons = {jButton3, jButton4, jButton5, jButton6, jButton7, jButton8, jButton9, jButton10};
-        Card[] cards = Arrays.copyOf(jButtons, jButtons.length, Card[].class);
-        ((Controller) jLabel1).setCards(cards);
-        shuffle();
     }
     
     private void setCardValues(ArrayList<Integer> newCardValues) {
