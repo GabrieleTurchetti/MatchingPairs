@@ -7,8 +7,10 @@ package matchingpairs;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
+import javax.swing.JButton;
 
 /**
  *
@@ -21,6 +23,10 @@ public class Board extends javax.swing.JFrame {
      */
     public Board() {
         initComponents();
+        JButton[] jButtons = {jButton3, jButton4, jButton5, jButton6, jButton7, jButton8, jButton9, jButton10};
+        Card[] cards = Arrays.copyOf(jButtons, jButtons.length, Card[].class);
+        ((Controller) jLabel1).setCards(cards);
+        shuffle();
     }
 
     /**
@@ -34,7 +40,7 @@ public class Board extends javax.swing.JFrame {
 
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        jLabel1 = new Controller();
         jLabel2 = new javax.swing.JLabel();
         jButton3 = new Card(0, this);
         jButton4 = new Card(1, this);
@@ -46,7 +52,9 @@ public class Board extends javax.swing.JFrame {
         jButton10 = new Card(7, this);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(800, 600));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setMinimumSize(new java.awt.Dimension(800, 630));
+        setResizable(false);
         setSize(new java.awt.Dimension(800, 630));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -63,16 +71,19 @@ public class Board extends javax.swing.JFrame {
         jButton2.setPreferredSize(new java.awt.Dimension(80, 40));
         getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 70, -1, -1));
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Pairs: 0");
-        jLabel1.setPreferredSize(new java.awt.Dimension(80, 20));
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 490, -1, -1));
+        jLabel1.setPreferredSize(new java.awt.Dimension(140, 20));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 490, -1, -1));
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Moves: 100");
-        jLabel2.setPreferredSize(new java.awt.Dimension(80, 20));
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 490, -1, -1));
+        jLabel2.setPreferredSize(new java.awt.Dimension(140, 20));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 490, -1, -1));
 
+        jButton3.setBackground(new java.awt.Color(0, 204, 102));
         jButton3.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton3.setInheritsPopupMenu(true);
         jButton3.setOpaque(true);
@@ -84,6 +95,7 @@ public class Board extends javax.swing.JFrame {
         });
         getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 180, -1, -1));
 
+        jButton4.setBackground(new java.awt.Color(0, 204, 102));
         jButton4.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton4.setInheritsPopupMenu(true);
         jButton4.setOpaque(true);
@@ -95,40 +107,76 @@ public class Board extends javax.swing.JFrame {
         });
         getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 180, -1, -1));
 
+        jButton5.setBackground(new java.awt.Color(0, 204, 102));
         jButton5.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton5.setInheritsPopupMenu(true);
         jButton5.setOpaque(true);
         jButton5.setPreferredSize(new java.awt.Dimension(100, 100));
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 180, -1, -1));
 
+        jButton6.setBackground(new java.awt.Color(0, 204, 102));
         jButton6.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton6.setInheritsPopupMenu(true);
         jButton6.setOpaque(true);
         jButton6.setPreferredSize(new java.awt.Dimension(100, 100));
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 180, -1, -1));
 
+        jButton7.setBackground(new java.awt.Color(0, 204, 102));
         jButton7.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton7.setInheritsPopupMenu(true);
         jButton7.setOpaque(true);
         jButton7.setPreferredSize(new java.awt.Dimension(100, 100));
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 300, -1, -1));
 
+        jButton8.setBackground(new java.awt.Color(0, 204, 102));
         jButton8.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton8.setInheritsPopupMenu(true);
         jButton8.setOpaque(true);
         jButton8.setPreferredSize(new java.awt.Dimension(100, 100));
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton8, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 300, -1, -1));
 
+        jButton9.setBackground(new java.awt.Color(0, 204, 102));
         jButton9.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton9.setInheritsPopupMenu(true);
         jButton9.setOpaque(true);
         jButton9.setPreferredSize(new java.awt.Dimension(100, 100));
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton9, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 300, -1, -1));
 
+        jButton10.setBackground(new java.awt.Color(0, 204, 102));
         jButton10.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
         jButton10.setInheritsPopupMenu(true);
         jButton10.setOpaque(true);
         jButton10.setPreferredSize(new java.awt.Dimension(100, 100));
+        jButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton10ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton10, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 300, -1, -1));
 
         pack();
@@ -136,16 +184,40 @@ public class Board extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        shuffle();
+        reset();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
+        ((Card) jButton4).onClick();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        ((Card) jButton3).onClick();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        ((Card) jButton5).onClick();
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        ((Card) jButton6).onClick();
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        ((Card) jButton7).onClick();
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        ((Card) jButton8).onClick();
+    }//GEN-LAST:event_jButton8ActionPerformed
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        ((Card) jButton9).onClick();
+    }//GEN-LAST:event_jButton9ActionPerformed
+
+    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+        ((Card) jButton10).onClick();
+    }//GEN-LAST:event_jButton10ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -164,6 +236,7 @@ public class Board extends javax.swing.JFrame {
     private ArrayList<Integer> cardValues;
     private PropertyChangeSupport changes = new PropertyChangeSupport(this);
     
+    @Override
     public void addPropertyChangeListener(PropertyChangeListener l) {
         changes.addPropertyChangeListener(l);
     }
@@ -185,6 +258,14 @@ public class Board extends javax.swing.JFrame {
 
         Collections.shuffle(newCardValues);
         setCardValues(newCardValues);        
+    }
+    
+    private void reset() {
+        initComponents();
+        JButton[] jButtons = {jButton3, jButton4, jButton5, jButton6, jButton7, jButton8, jButton9, jButton10};
+        Card[] cards = Arrays.copyOf(jButtons, jButtons.length, Card[].class);
+        ((Controller) jLabel1).setCards(cards);
+        shuffle();
     }
     
     private void setCardValues(ArrayList<Integer> newCardValues) {

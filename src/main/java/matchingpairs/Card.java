@@ -16,34 +16,53 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 
+
+
 /**
  *
  * @author gabri
  */
 public class Card extends JButton {
-  
-    enum State {
-        EXCLUDED,
-        FACE_DOWN,
-        FACE_UP
-    }
-     
     private int value;
     private State state;
     private int index;
     private VetoableChangeSupport vetos = new VetoableChangeSupport(this);
     private Board board;
-    private final PropertyChangeSupport changes = new PropertyChangeSupport(this);;
+    private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
+    private Controller controller;
     
     private void setValue(int newValue) {
         value = newValue;
-        setText(Integer.toString(value));
+        setState(State.FACE_DOWN);
+    }
+    
+    public void setController(Controller controller) {
+        this.controller = controller;
+        MatchedListener matchedListener = new MatchedListener();
+        controller.addPropertyChangeListener(matchedListener);
     }
     
     public class CardValuesListener implements PropertyChangeListener, Serializable {
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            int newValue = ((ArrayList<Integer>) evt.getNewValue()).get(index);
-            setValue(newValue);
+            if (evt.getPropertyName().equals("cardValues")) {
+                int newValue = ((ArrayList<Integer>) evt.getNewValue()).get(index);
+                setValue(newValue);
+            }
+        }
+    }
+    
+    public class MatchedListener implements PropertyChangeListener, Serializable {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals("matched")) {
+                if ((boolean) evt.getNewValue() && state == State.FACE_UP) {
+                    setState(State.EXCLUDED);       
+                    return;
+                }
+                
+                setState(State.FACE_DOWN);
+            }
         }
     }
     
@@ -56,13 +75,17 @@ public class Card extends JButton {
     }
     
     public void addPropertyChangeListener(PropertyChangeListener l) {
-        if (this.changes != null) {
-            this.changes.addPropertyChangeListener(l);
+        if (changes != null) {
+            changes.addPropertyChangeListener(l);
         } 
     }
     
     public void addVetoableChangelistener(VetoableChangeListener l) {
         vetos.addVetoableChangeListener(l);
+    }
+    
+    public void onClick() {
+        setState(State.FACE_UP);
     }
     
     public void setState(State newState) {
@@ -71,8 +94,26 @@ public class Card extends JButton {
         try{
             vetos.fireVetoableChange("state", oldState, newState);
             state = newState;
-        } catch(PropertyVetoException e){
-            //
-        }
+            
+            switch (state) {
+                case FACE_UP:
+                    setBackground(Colors.white);
+                    setText(Integer.toString(value));
+                    break;
+                    
+                case FACE_DOWN:
+                    setBackground(Colors.green);
+                    setText("");
+                    break;
+                    
+                case EXCLUDED:
+                    setBackground(Colors.red);
+                    break;
+            }
+        } catch(PropertyVetoException e) {}
+    }
+    
+    public int getValue() {
+        return value;
     }
 }
