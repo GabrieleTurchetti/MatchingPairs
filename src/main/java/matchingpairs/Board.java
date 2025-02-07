@@ -46,8 +46,8 @@ public class Board extends javax.swing.JFrame {
 
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jLabel1 = new Controller();
-        jLabel2 = new Counter();
+        jLabel1 = new Controller(this);
+        jLabel2 = new Counter(this);
         jButton3 = new Card(0, this);
         jButton4 = new Card(1, this);
         jButton5 = new Card(2, this);
@@ -239,7 +239,7 @@ public class Board extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
-    private ArrayList<Integer> cardValues;
+    private ArrayList<Integer> shuffle;
     private PropertyChangeSupport changes = new PropertyChangeSupport(this);
     
     @Override
@@ -248,7 +248,7 @@ public class Board extends javax.swing.JFrame {
     }
 
     private void shuffle() {
-        ArrayList<Integer> newCardValues = new ArrayList<Integer>();
+        ArrayList<Integer> newShuffle = new ArrayList<Integer>();
         Random random = new Random();
         
         for (int i = 0; i < 4; i++) {
@@ -256,19 +256,19 @@ public class Board extends javax.swing.JFrame {
             
             do {
                 rand = random.nextInt(10);
-            } while(newCardValues.contains(rand));
+            } while(newShuffle.contains(rand));
             
-            newCardValues.add(rand);
-            newCardValues.add(rand);
+            newShuffle.add(rand);
+            newShuffle.add(rand);
         }
 
-        Collections.shuffle(newCardValues);
-        setCardValues(newCardValues);        
+        Collections.shuffle(newShuffle);
+        setShuffle(newShuffle);        
     }
     
-    private void setCardValues(ArrayList<Integer> newCardValues) {
-        ArrayList<Integer> oldCardValues = cardValues;
-        cardValues = newCardValues;
-        changes.firePropertyChange("cardValues", oldCardValues, newCardValues);
+    private void setShuffle(ArrayList<Integer> newShuffle) {
+        ArrayList<Integer> oldShuffle = shuffle;
+        shuffle = newShuffle;
+        changes.firePropertyChange("shuffle", oldShuffle, newShuffle);
     }
 }

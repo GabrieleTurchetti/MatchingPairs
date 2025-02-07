@@ -42,12 +42,13 @@ public class Card extends JButton {
         controller.addPropertyChangeListener(matchedListener);
     }
     
-    public class CardValuesListener implements PropertyChangeListener, Serializable {
+    public class ShuffleListener implements PropertyChangeListener, Serializable {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getPropertyName().equals("cardValues")) {
+            if (evt.getPropertyName().equals("shuffle")) {
                 int newValue = ((ArrayList<Integer>) evt.getNewValue()).get(index);
                 setValue(newValue);
+                setState(State.FACE_DOWN);
             }
         }
     }
@@ -72,7 +73,7 @@ public class Card extends JButton {
         this.index = index;
         this.board = board;
         this.state = State.FACE_DOWN;
-        CardValuesListener cardValuesListener = new CardValuesListener();
+        ShuffleListener cardValuesListener = new ShuffleListener();
         this.board.addPropertyChangeListener(cardValuesListener);
     }
     
@@ -110,6 +111,7 @@ public class Card extends JButton {
                     
                 case EXCLUDED:
                     setBackground(Colors.red);
+                    setText("");
                     break;
             }
         } catch(PropertyVetoException e) {}

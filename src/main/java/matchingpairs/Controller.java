@@ -15,6 +15,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
@@ -26,13 +27,17 @@ public class Controller extends JLabel {
     private Card[] cards;
     private int v1;
     private int v2;
-    private int matchCount;
+    private int pairs;
     private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
+    private JFrame board;
     
-    public Controller() {
+    public Controller(JFrame board) {
         this.v1 = -1;
         this.v2 = -1;
-        this.matchCount = 0;
+        this.pairs = 0;
+        this.board = board;
+        ShuffleListener cardValuesListener = new ShuffleListener();
+        this.board.addPropertyChangeListener(cardValuesListener);
     }
     
     public void setCards(Card[] cards) {
@@ -42,6 +47,22 @@ public class Controller extends JLabel {
         for (Card card : cards) {
             card.addVetoableChangelistener(cardStatesListener);
         }
+    }
+    
+    public class ShuffleListener implements PropertyChangeListener, Serializable {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals("shuffle")) {
+                setPairs(0);
+                v1 = -1;
+                v2 = -1;
+            }
+        }
+    }
+    
+    public void setPairs(int newPairs) {
+        pairs = newPairs;
+        setText("Pairs: " + pairs);
     }
     
     public class CardStatesListener implements VetoableChangeListener, Serializable {
@@ -93,7 +114,7 @@ public class Controller extends JLabel {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         
         if (v1 == v2) {
-            this.setText("Pairs: " + ++matchCount);
+            setPairs(pairs + 1);
            
             scheduler.schedule(() -> {
                 changes.firePropertyChange("matched", false, true);

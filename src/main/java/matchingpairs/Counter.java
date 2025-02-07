@@ -7,6 +7,7 @@ package matchingpairs;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 /**
@@ -14,11 +15,15 @@ import javax.swing.JLabel;
  * @author gabri
  */
 public class Counter extends JLabel {
-    private int count;
+    private int moves;
     private Controller controller;
+    private JFrame board;
     
-    public Counter() {
-        this.count = 0;
+    public Counter(JFrame board) {
+        this.moves = 0;
+        this.board = board;
+        ShuffleListener cardValuesListener = new ShuffleListener();
+        this.board.addPropertyChangeListener(cardValuesListener);
     }
     
     public void setController(Controller controller) {
@@ -27,11 +32,25 @@ public class Counter extends JLabel {
         controller.addPropertyChangeListener(uncoveredListener);
     }
     
+    public class ShuffleListener implements PropertyChangeListener, Serializable {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals("shuffle")) {
+                setMoves(0);
+            }
+        }
+    }
+    
+    private void setMoves(int newMoves) {
+        moves = newMoves;
+        setText("Moves: " + moves);
+    }
+    
     public class UncoveredListener implements PropertyChangeListener, Serializable {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals("uncovered")) {
-                setText("Moves: " + ++count);
+                setMoves(moves + 1);
             }
         }
     }
