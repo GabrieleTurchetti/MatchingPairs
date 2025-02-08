@@ -10,6 +10,7 @@ matchingpairs\Board$1.class
 matchingpairs\Board$7.class
 matchingpairs\Main.class
 matchingpairs\Board.class
+matchingpairs\Board$10.class
 matchingpairs\Counter.class
 matchingpairs\Board$9.class
 matchingpairs\Controller.class
@@ -18,6 +19,7 @@ matchingpairs\Board$4.class
 matchingpairs\Card$1.class
 matchingpairs\Board$2.class
 matchingpairs\Card$MatchedListener.class
+matchingpairs\Board$FinishedListener.class
 matchingpairs\Board$6.class
 matchingpairs\Card$ShuffleListener.class
 matchingpairs\State.class

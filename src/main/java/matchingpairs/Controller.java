@@ -30,6 +30,7 @@ public class Controller extends JLabel {
     private int pairs;
     private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
     private JFrame board;
+    ScheduledExecutorService scheduler;
     
     public Controller(JFrame board) {
         this.v1 = -1;
@@ -38,6 +39,7 @@ public class Controller extends JLabel {
         this.board = board;
         ShuffleListener cardValuesListener = new ShuffleListener();
         this.board.addPropertyChangeListener(cardValuesListener);
+        this.scheduler = Executors.newSingleThreadScheduledExecutor();
     }
     
     public void setCards(Card[] cards) {
@@ -63,6 +65,12 @@ public class Controller extends JLabel {
     public void setPairs(int newPairs) {
         pairs = newPairs;
         setText("Pairs: " + pairs);
+        
+        if (pairs == 4) {
+            scheduler.schedule(() -> {
+                changes.firePropertyChange("finished", null, true);
+            }, 600, TimeUnit.MILLISECONDS);
+        }
     }
     
     public class CardStatesListener implements VetoableChangeListener, Serializable {
@@ -77,13 +85,13 @@ public class Controller extends JLabel {
                         if (oldState == State.FACE_DOWN) {
                             if (v1 == -1) {
                                 v1 = ((Card) evt.getSource()).getValue();
-                                changes.firePropertyChange("uncovered", false, true);
+                                changes.firePropertyChange("uncovered", null, true);
                                 break;
                             }
 
                             if (v2 == -1) {
                                 v2 = ((Card) evt.getSource()).getValue();
-                                changes.firePropertyChange("uncovered", false, true);
+                                changes.firePropertyChange("uncovered", null, true);
                                 onMatch();
                                 break;
                             }
@@ -111,13 +119,11 @@ public class Controller extends JLabel {
     }
     
     private void onMatch() {
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        
         if (v1 == v2) {
             setPairs(pairs + 1);
            
             scheduler.schedule(() -> {
-                changes.firePropertyChange("matched", false, true);
+                changes.firePropertyChange("matched", null, true);
                 v1 = -1;
                 v2 = -1;
             }, 500, TimeUnit.MILLISECONDS);
@@ -126,7 +132,7 @@ public class Controller extends JLabel {
         }
             
         scheduler.schedule(() -> {
-            changes.firePropertyChange("matched", true, false);
+            changes.firePropertyChange("matched", null, false);
             v1 = -1;
             v2 = -1;
         }, 500, TimeUnit.MILLISECONDS);

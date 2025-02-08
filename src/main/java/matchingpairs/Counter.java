@@ -41,6 +41,10 @@ public class Counter extends JLabel {
         }
     }
     
+    public int getMoves() {
+        return moves;
+    }
+    
     private void setMoves(int newMoves) {
         moves = newMoves;
         setText("Moves: " + moves);
