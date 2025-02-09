@@ -6,14 +6,11 @@ package matchingpairs;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeSupport;
 import java.beans.VetoableChangeListener;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 
 
@@ -39,16 +36,7 @@ public class Card extends JButton {
         vetos = new VetoableChangeSupport(this);
     }
     
-    private void setValue(int newValue) {
-        value = newValue;
-    }
-    
-    public void setController(Controller controller) {
-        this.controller = controller;
-        MatchedListener matchedListener = new MatchedListener();
-        controller.addPropertyChangeListener(matchedListener);
-    }
-    
+    // Listener class for the shuffle event
     public class ShuffleListener implements PropertyChangeListener, Serializable {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
@@ -60,6 +48,7 @@ public class Card extends JButton {
         }
     }
 
+    // Listener class for the matching event
     public class MatchedListener implements PropertyChangeListener, Serializable {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
@@ -76,22 +65,31 @@ public class Card extends JButton {
         }
     }
     
-    public void addVetoableChangelistener(VetoableChangeListener l) {
-        vetos.addVetoableChangeListener(l);
-    }
-    
-    public void onClick() {
-        if (state == State.FACE_DOWN) {
-            setState(State.FACE_UP);
-            return;
-        }
-        
-        firePropertyChange("clicked", false, true);
-        setState(State.FACE_DOWN);
+    public void addVetoableChangelistener(VetoableChangeListener listener) {
+        vetos.addVetoableChangeListener(listener);
+    } 
+
+    @Override
+    public void removeVetoableChangeListener(VetoableChangeListener listener) {
+        vetos.removeVetoableChangeListener(listener);
     }
     
     public int getIndex() {
         return index;
+    }
+    
+    public int getValue() {
+        return value;
+    }
+
+    private void setValue(int newValue) {
+        value = newValue;
+    }
+    
+    public void setController(Controller controller) {
+        this.controller = controller;
+        MatchedListener matchedListener = new MatchedListener();
+        controller.addPropertyChangeListener(matchedListener);
     }
     
     public void setState(State newState) {
@@ -102,6 +100,7 @@ public class Card extends JButton {
             firePropertyChange("state", oldState, newState);
             state = newState;
             
+            // Implement the business logic for the change of the state
             switch (state) {
                 case FACE_UP:
                     setBackground(Colors.white);
@@ -121,7 +120,15 @@ public class Card extends JButton {
         } catch(PropertyVetoException e) {}
     }
     
-    public int getValue() {
-        return value;
+    // Implement the business logic for the click event
+    public void onClick() {
+        firePropertyChange("clicked", false, true); // Fire the click event to the Controller
+        
+        if (state == State.FACE_DOWN) {
+            setState(State.FACE_UP);
+            return;
+        }
+        
+        setState(State.FACE_DOWN);
     }
 }

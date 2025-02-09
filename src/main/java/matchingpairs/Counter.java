@@ -26,17 +26,22 @@ public class Counter extends JLabel {
         this.board.addPropertyChangeListener(cardValuesListener);
     }
     
-    public void setController(Controller controller) {
-        this.controller = controller;
-        UncoveredListener uncoveredListener = new UncoveredListener();
-        controller.addPropertyChangeListener(uncoveredListener);
-    }
-    
+    // Listener class for the shuffle event
     public class ShuffleListener implements PropertyChangeListener, Serializable {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals("shuffle")) {
                 setMoves(0);
+            }
+        }
+    }
+    
+    // Listener class for the uncovered card event
+    public class UncoveredListener implements PropertyChangeListener, Serializable {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals("uncovered")) {
+                setMoves(moves + 1);
             }
         }
     }
@@ -50,12 +55,9 @@ public class Counter extends JLabel {
         setText("Moves: " + moves);
     }
     
-    public class UncoveredListener implements PropertyChangeListener, Serializable {
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getPropertyName().equals("uncovered")) {
-                setMoves(moves + 1);
-            }
-        }
+    public void setController(Controller controller) {
+        this.controller = controller;
+        UncoveredListener uncoveredListener = new UncoveredListener();
+        controller.addPropertyChangeListener(uncoveredListener);
     }
 }

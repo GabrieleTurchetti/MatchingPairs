@@ -6,7 +6,6 @@ package matchingpairs;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +24,7 @@ public class Board extends javax.swing.JFrame {
      * Creates new form Board
      */
     public Board() {
+        // Initialization of all the components
         initComponents();
         JButton[] jButtons = {jButton3, jButton4, jButton5, jButton6, jButton7, jButton8, jButton9, jButton10};
         Card[] cards = Arrays.copyOf(jButtons, jButtons.length, Card[].class);
@@ -38,6 +38,28 @@ public class Board extends javax.swing.JFrame {
         FinishedListener finishedListener = new FinishedListener();
         ((Controller) jLabel1).addPropertyChangeListener(finishedListener);
         shuffle();
+    }
+    
+    // Listener class for the endgame event
+    public class FinishedListener implements PropertyChangeListener, Serializable {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals("finished")) {
+                // Displays the dialog to keep playing 
+                int option = JOptionPane.showConfirmDialog(
+                    null,
+                    "You finished in " + ((Counter) jLabel2).getMoves() + " moves.\n" + "Do you want to continue playing?",
+                    "Finished",
+                    JOptionPane.YES_NO_OPTION
+                );
+        
+                if (option == 1) {
+                    System.exit(0);
+                }
+                
+                shuffle();
+            }
+        }
     }
 
     /**
@@ -243,6 +265,7 @@ public class Board extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // Displays the exit confirmation dialog
         int option = JOptionPane.showConfirmDialog(
             null,
             "Do you want to close the application?",
@@ -269,28 +292,15 @@ public class Board extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
-    private ArrayList<Integer> shuffle;
+    private ArrayList<Integer> shuffle; // Sequence of card values
     
-    public class FinishedListener implements PropertyChangeListener, Serializable {
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getPropertyName().equals("finished")) {
-                int option = JOptionPane.showConfirmDialog(
-                    null,
-                    "You finished in " + ((Counter) jLabel2).getMoves() + " moves.\n" + "Do you want to continue playing?",
-                    "Finished",
-                    JOptionPane.YES_NO_OPTION
-                );
-        
-                if (option == 1) {
-                    System.exit(0);
-                }
-                
-                shuffle();
-            }
-        }
+    private void setShuffle(ArrayList<Integer> newShuffle) {
+        ArrayList<Integer> oldShuffle = shuffle;
+        shuffle = newShuffle;
+        firePropertyChange("shuffle", oldShuffle, newShuffle);
     }
 
+    // Implement the shuffle of the cards
     private void shuffle() {
         ArrayList<Integer> newShuffle = new ArrayList<Integer>();
         Random random = new Random();
@@ -308,11 +318,5 @@ public class Board extends javax.swing.JFrame {
 
         Collections.shuffle(newShuffle);
         setShuffle(newShuffle);        
-    }
-    
-    private void setShuffle(ArrayList<Integer> newShuffle) {
-        ArrayList<Integer> oldShuffle = shuffle;
-        shuffle = newShuffle;
-        firePropertyChange("shuffle", oldShuffle, newShuffle);
     }
 }
