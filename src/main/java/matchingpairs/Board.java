@@ -270,12 +270,6 @@ public class Board extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
     private ArrayList<Integer> shuffle;
-    private PropertyChangeSupport changes = new PropertyChangeSupport(this);
-    
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener l) {
-        changes.addPropertyChangeListener(l);
-    }
     
     public class FinishedListener implements PropertyChangeListener, Serializable {
         @Override
@@ -319,6 +313,6 @@ public class Board extends javax.swing.JFrame {
     private void setShuffle(ArrayList<Integer> newShuffle) {
         ArrayList<Integer> oldShuffle = shuffle;
         shuffle = newShuffle;
-        changes.firePropertyChange("shuffle", oldShuffle, newShuffle);
+        firePropertyChange("shuffle", oldShuffle, newShuffle);
     }
 }

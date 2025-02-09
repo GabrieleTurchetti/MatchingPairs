@@ -26,14 +26,21 @@ public class Card extends JButton {
     private int value;
     private State state;
     private int index;
-    private VetoableChangeSupport vetos = new VetoableChangeSupport(this);
+    private VetoableChangeSupport vetos;
     private Board board;
-    private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
     private Controller controller;
+    
+    public Card(int index, Board board) {
+        this.index = index;
+        this.board = board;
+        this.state = State.FACE_DOWN;
+        ShuffleListener cardValuesListener = new ShuffleListener();
+        this.board.addPropertyChangeListener(cardValuesListener);
+        vetos = new VetoableChangeSupport(this);
+    }
     
     private void setValue(int newValue) {
         value = newValue;
-        setState(State.FACE_DOWN);
     }
     
     public void setController(Controller controller) {
@@ -69,26 +76,22 @@ public class Card extends JButton {
         }
     }
     
-    public Card(int index, Board board) {
-        this.index = index;
-        this.board = board;
-        this.state = State.FACE_DOWN;
-        ShuffleListener cardValuesListener = new ShuffleListener();
-        this.board.addPropertyChangeListener(cardValuesListener);
-    }
-    
-    public void addPropertyChangeListener(PropertyChangeListener l) {
-        if (changes != null) {
-            changes.addPropertyChangeListener(l);
-        } 
-    }
-    
     public void addVetoableChangelistener(VetoableChangeListener l) {
         vetos.addVetoableChangeListener(l);
     }
     
     public void onClick() {
-        setState(State.FACE_UP);
+        if (state == State.FACE_DOWN) {
+            setState(State.FACE_UP);
+            return;
+        }
+        
+        firePropertyChange("clicked", false, true);
+        setState(State.FACE_DOWN);
+    }
+    
+    public int getIndex() {
+        return index;
     }
     
     public void setState(State newState) {
@@ -96,6 +99,7 @@ public class Card extends JButton {
         
         try{
             vetos.fireVetoableChange("state", oldState, newState);
+            firePropertyChange("state", oldState, newState);
             state = newState;
             
             switch (state) {

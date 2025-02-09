@@ -10,6 +10,7 @@ import java.beans.PropertyChangeSupport;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -28,9 +29,9 @@ public class Controller extends JLabel {
     private int v1;
     private int v2;
     private int pairs;
-    private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
     private JFrame board;
     ScheduledExecutorService scheduler;
+    private ArrayList<Boolean> cardsClicked;
     
     public Controller(JFrame board) {
         this.v1 = -1;
@@ -40,6 +41,7 @@ public class Controller extends JLabel {
         ShuffleListener cardValuesListener = new ShuffleListener();
         this.board.addPropertyChangeListener(cardValuesListener);
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
+        this.cardsClicked = new ArrayList<Boolean>();
     }
     
     public void setCards(Card[] cards) {
@@ -48,6 +50,7 @@ public class Controller extends JLabel {
         
         for (Card card : cards) {
             card.addVetoableChangelistener(cardStatesListener);
+            cardsClicked.add(false);
         }
     }
     
@@ -68,8 +71,18 @@ public class Controller extends JLabel {
         
         if (pairs == 4) {
             scheduler.schedule(() -> {
-                changes.firePropertyChange("finished", null, true);
+                firePropertyChange("finished", null, true);
             }, 600, TimeUnit.MILLISECONDS);
+        }
+    }
+    
+    public class ClickedListener implements PropertyChangeListener, Serializable {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals("clicked")) {
+                int index = ((Card) evt.getSource()).getIndex();
+                cardsClicked.set(index, true);
+            }
         }
     }
     
@@ -79,19 +92,57 @@ public class Controller extends JLabel {
             if (evt.getPropertyName().equals("state")) {
                 State oldState = (State) evt.getOldValue();
                 State newState = (State) evt.getNewValue();
+                int index = ((Card) evt.getSource()).getIndex();
                 
-                switch (newState) {
+                switch (oldState) {
+                    case FACE_DOWN:
+                        cardsClicked.set(index, false);
+                        
+                        if (v1 == -1) {
+                            v1 = ((Card) evt.getSource()).getValue();
+                            firePropertyChange("uncovered", null, true);
+                            break;
+                        }
+
+                        if (v2 == -1) {
+                            v2 = ((Card) evt.getSource()).getValue();
+                            firePropertyChange("uncovered", null, true);
+                            onMatch();
+                            break;
+                        }
+                            
+                        throw new PropertyVetoException("The are already 2 uncovered cards.", evt);
+                        
+                    case FACE_UP:
+                        if (cardsClicked.get(index)) {
+                            cardsClicked.set(index, false);
+                            throw new PropertyVetoException("The card is uncovered.", evt);
+                        }
+
+                        break;                      
+                        
+                    case EXCLUDED:
+                        if (cardsClicked.get(index)) {
+                            cardsClicked.set(index, false);
+                            throw new PropertyVetoException("The card is excluded.", evt);
+                        }
+                        
+                        break;                      
+                }
+                
+                
+                /*switch (newState) {
                     case FACE_UP:
                         if (oldState == State.FACE_DOWN) {
                             if (v1 == -1) {
                                 v1 = ((Card) evt.getSource()).getValue();
-                                changes.firePropertyChange("uncovered", null, true);
+                                firePropertyChange("uncovered", null, true);
                                 break;
                             }
 
                             if (v2 == -1) {
                                 v2 = ((Card) evt.getSource()).getValue();
-                                changes.firePropertyChange("uncovered", null, true);
+                                firePropertyChange("uncovered", null, true);
                                 onMatch();
                                 break;
                             }
@@ -106,16 +157,9 @@ public class Controller extends JLabel {
                         
                     case EXCLUDED:
                         break;
-                }
+                }*/
             }
         }
-    }
-    
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener l) {
-        if (changes != null) {
-            changes.addPropertyChangeListener(l);
-        } 
     }
     
     private void onMatch() {
@@ -123,7 +167,7 @@ public class Controller extends JLabel {
             setPairs(pairs + 1);
            
             scheduler.schedule(() -> {
-                changes.firePropertyChange("matched", null, true);
+                firePropertyChange("matched", null, true);
                 v1 = -1;
                 v2 = -1;
             }, 500, TimeUnit.MILLISECONDS);
@@ -132,7 +176,7 @@ public class Controller extends JLabel {
         }
             
         scheduler.schedule(() -> {
-            changes.firePropertyChange("matched", null, false);
+            firePropertyChange("matched", null, false);
             v1 = -1;
             v2 = -1;
         }, 500, TimeUnit.MILLISECONDS);
